@@ -91,6 +91,21 @@ app.post('/videos', (req: RequestWithBody<VideoCreateModel>, res: Response<Video
         )
 
     }
+
+    if (availableResolutions && availableResolutions.length ) {
+        for (let i = 0;  i< availableResolutions.length; i++ ){
+            if (!Object.keys(availableResolutionsQuality).includes(availableResolutions[i])){
+                errors.push(
+                    {
+                        message: 'InputModel has incorrect values',
+                        field: 'availableResolutions'
+                    }
+                )
+                break
+            }
+        }
+
+    }
     if (errors.length){
         res.status(400).json({
             errorsMessages: errors
@@ -147,7 +162,20 @@ app.put('/videos/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, Co
             }
         )
     }
+    if (availableResolutions && availableResolutions.length ) {
+        for (let i = 0;  i< availableResolutions.length; i++ ){
+            if (!Object.keys(availableResolutionsQuality).includes(availableResolutions[i])){
+                errors400.push(
+                    {
+                        message: 'InputModel has incorrect values',
+                        field: 'availableResolutions'
+                    }
+                )
+                break
+            }
+        }
 
+    }
 
     if (authorChecks) {
         errors400.push(
@@ -176,6 +204,16 @@ app.put('/videos/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, Co
         res.sendStatus(404).json({
             errorsMessages: errors404
         })
+        return
+
+    }
+    if (typeof publicationDate !== 'string') {
+        errors400.push(
+            {
+                message: 'No such video',
+                field: 'publicationDate'
+            }
+        )
         return
 
     }
