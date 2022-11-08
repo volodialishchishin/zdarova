@@ -80,10 +80,6 @@ app.post('/videos', (req: RequestWithBody<VideoCreateModel>, res: Response<Video
                 field: 'title'
             }
         )
-        res.status(400).json({
-            errorsMessages: errors
-        })
-        return;
     }
 
     if (authorChecks) {
@@ -96,17 +92,16 @@ app.post('/videos', (req: RequestWithBody<VideoCreateModel>, res: Response<Video
         res.status(400).json({
             errorsMessages: errors
         })
-        return
     }
 
     const newVideo: VideoViewModel = {
         id: +new Date(),
         title,
         author,
-        canBeDownloaded: true,
+        canBeDownloaded: false,
         minAgeRestriction: null,
         createdAt: new Date().toISOString(),
-        publicationDate: new Date().toISOString(),
+        publicationDate: new Date(new Date().getDate()+1).toISOString(),
         availableResolutions: availableResolutions.length >= 1 ? availableResolutions : null
     }
 
@@ -145,10 +140,6 @@ app.put('/videos/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, Co
                 field: 'title'
             }
         )
-        res.status(400).json({
-            errorsMessages: errors
-        })
-        return;
     }
 
 
@@ -162,7 +153,17 @@ app.put('/videos/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, Co
         res.status(400).json({
             errorsMessages: errors
         })
-        return
+    }
+    if (typeof canBeDownloaded !== 'boolean'){
+        errors.push(
+            {
+                message: 'InputModel has incorrect values',
+                field: 'canBeDownloaded'
+            }
+        )
+        res.status(400).json({
+            errorsMessages: errors
+        })
     }
     let foundVideo = db.videos.find(e => e.id === +req.params.id)
     if (!foundVideo) {
