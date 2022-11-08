@@ -5,9 +5,10 @@ import {VideoViewModel} from "./models/VideoViewModel";
 import {CourseUpdateModel} from "./models/CourseUpdateModel";
 import {URIParamsCourseIdModel} from "./models/URIParamsCourseIdModel";
 import {errorMessages, ErrorModel} from "./models/Error";
+import * as Process from "process";
 
 export const app = express()
-const port =  8000
+const port =  process.env.PORT
 enum availableResolutionsQuality {
     P144 = 'P144',
     P240 = 'P240',
@@ -227,5 +228,5 @@ app.delete('/testing/all-data', (req: Request, res: Response) => {
 })
 
 app.listen(port,()=>{
-    console.log('here')
+    console.log(`Lintening on ${port}`)
 })
