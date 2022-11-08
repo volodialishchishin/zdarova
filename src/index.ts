@@ -7,7 +7,7 @@ import {URIParamsCourseIdModel} from "./models/URIParamsCourseIdModel";
 import {errorMessages, ErrorModel} from "./models/Error";
 
 export const app = express()
-const port =  process.env.PORT
+const port =  process.env.PORT || 8000
 enum availableResolutionsQuality {
     P144 = 'P144',
     P240 = 'P240',
@@ -91,7 +91,7 @@ app.post('/videos', (req: RequestWithBody<VideoCreateModel>, res: Response<Video
         )
 
     }
-
+    console.log(availableResolutions)
     if (availableResolutions && availableResolutions.length ) {
         for (let i = 0;  i< availableResolutions.length; i++ ){
             if (!Object.keys(availableResolutionsQuality).includes(availableResolutions[i])){
@@ -204,7 +204,6 @@ app.put('/videos/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, Co
         res.sendStatus(404).json({
             errorsMessages: errors404
         })
-        return
 
     }
     if (typeof publicationDate !== 'string') {
@@ -214,7 +213,6 @@ app.put('/videos/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, Co
                 field: 'publicationDate'
             }
         )
-        return
 
     }
     if (minAgeRestriction && (minAgeRestriction > 18 || minAgeRestriction < 1)) {
@@ -239,12 +237,14 @@ app.put('/videos/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, Co
         availableResolutions = null
         return
     }
-    foundVideo.title = title
-    foundVideo.publicationDate = publicationDate
-    foundVideo.minAgeRestriction = minAgeRestriction
-    foundVideo.canBeDownloaded = canBeDownloaded
-    foundVideo.availableResolutions = availableResolutions
-    foundVideo.author = author
+    if (foundVideo){
+        foundVideo.title = title
+        foundVideo.publicationDate = publicationDate
+        foundVideo.minAgeRestriction = minAgeRestriction
+        foundVideo.canBeDownloaded = canBeDownloaded
+        foundVideo.availableResolutions = availableResolutions
+        foundVideo.author = author
+    }
     res.sendStatus(204)
 
 })
