@@ -226,4 +226,6 @@ app.delete('/testing/all-data', (req: Request, res: Response) => {
     res.sendStatus(204)
 })
 
-app.listen(port)
+app.listen(port,()=>{
+    console.log('here')
+})
