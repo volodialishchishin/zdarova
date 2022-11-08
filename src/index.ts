@@ -7,7 +7,7 @@ import {URIParamsCourseIdModel} from "./models/URIParamsCourseIdModel";
 import {errorMessages, ErrorModel} from "./models/Error";
 
 export const app = express()
-const port = process.env.PORT || 5000
+const port =  8000
 enum availableResolutionsQuality {
     P144 = 'P144',
     P240 = 'P240',
@@ -63,10 +63,10 @@ const getCourseViewModel = (video: videoType): videoType => {
 app.use(express.json())
 
 
-app.get('videos', (req: Request, res: Response<Array<VideoViewModel>>) => {
+app.get('/videos', (req: Request, res: Response<Array<VideoViewModel>>) => {
     res.json(db.videos.map(getCourseViewModel))
 })
-app.post('videos', (req: RequestWithBody<VideoCreateModel>, res: Response<VideoViewModel | ErrorModel>) => {
+app.post('/videos', (req: RequestWithBody<VideoCreateModel>, res: Response<VideoViewModel | ErrorModel>) => {
     const {title, author, availableResolutions} = req.body
     const errors: Array<errorMessages> = []
     const titleChecks = !title || title.length > 40
@@ -113,7 +113,7 @@ app.post('videos', (req: RequestWithBody<VideoCreateModel>, res: Response<VideoV
     res.status(201).json(getCourseViewModel(newVideo))
 
 })
-app.get('videos/:id', (req: RequestWithParams<URIParamsCourseIdModel>, res: Response<VideoViewModel | ErrorModel>) => {
+app.get('/videos/:id', (req: RequestWithParams<URIParamsCourseIdModel>, res: Response<VideoViewModel | ErrorModel>) => {
     const errors: Array<errorMessages> = []
     let foundVideo = db.videos.find(e => e.id === +req.params.id)
     if (!foundVideo) {
@@ -131,7 +131,7 @@ app.get('videos/:id', (req: RequestWithParams<URIParamsCourseIdModel>, res: Resp
     }
     res.status(200).json(getCourseViewModel(foundVideo))
 })
-app.put('videos/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, CourseUpdateModel>, res: Response) => {
+app.put('/videos/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, CourseUpdateModel>, res: Response) => {
     let {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
     const errors: Array<errorMessages> = []
     const titleChecks = !title || title.length > 40
@@ -202,7 +202,7 @@ app.put('videos/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, Cou
     res.sendStatus(204)
 
 })
-app.delete('videos/:id', (req: RequestWithParams<{ id: String }>, res: Response) => {
+app.delete('/videos/:id', (req: RequestWithParams<{ id: String }>, res: Response) => {
     const errors: Array<errorMessages> = []
     let foundVideo = db.videos.find(e => e.id === +req.params.id)
     if (!foundVideo) {
@@ -221,7 +221,7 @@ app.delete('videos/:id', (req: RequestWithParams<{ id: String }>, res: Response)
     db.videos = db.videos.filter(c => c.id !== +req.params.id)
     res.sendStatus(204)
 })
-app.delete('testing/all-data', (req: Request, res: Response) => {
+app.delete('/testing/all-data', (req: Request, res: Response) => {
     db.videos = []
     res.sendStatus(204)
 })
