@@ -5,7 +5,6 @@ import {VideoViewModel} from "./models/VideoViewModel";
 import {CourseUpdateModel} from "./models/CourseUpdateModel";
 import {URIParamsCourseIdModel} from "./models/URIParamsCourseIdModel";
 import {errorMessages, ErrorModel} from "./models/Error";
-import * as Process from "process";
 
 export const app = express()
 const port =  process.env.PORT
@@ -64,9 +63,7 @@ const getCourseViewModel = (video: videoType): videoType => {
 app.use(express.json())
 
 app.get('/', (req: Request, res: Response) => {
-    res.json({
-        ok:'ok'
-    })
+    res.send('fdsgfdfsgdsfgds')
 })
 app.get('/videos', (req: Request, res: Response<Array<VideoViewModel>>) => {
     res.json(db.videos.map(getCourseViewModel))
