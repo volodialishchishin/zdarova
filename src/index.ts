@@ -89,19 +89,24 @@ app.post('/videos', (req: RequestWithBody<VideoCreateModel>, res: Response<Video
                 field: 'author'
             }
         )
+
+    }
+    if (errors.length){
         res.status(400).json({
             errorsMessages: errors
         })
     }
+    let date = new Date();
 
+    new Date(date.setDate(date.getDate() + 1)).toISOString();
     const newVideo: VideoViewModel = {
         id: +new Date(),
         title,
         author,
         canBeDownloaded: false,
         minAgeRestriction: null,
-        createdAt: new Date().toISOString(),
-        publicationDate: new Date(new Date().getDate()+1).toISOString(),
+        createdAt: date.toISOString(),
+        publicationDate: new Date(date.setDate(date.getDate() + 1)).toISOString(),
         availableResolutions: availableResolutions.length >= 1 ? availableResolutions : null
     }
 
@@ -130,11 +135,12 @@ app.get('/videos/:id', (req: RequestWithParams<URIParamsCourseIdModel>, res: Res
 })
 app.put('/videos/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, CourseUpdateModel>, res: Response) => {
     let {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
-    const errors: Array<errorMessages> = []
+    const errors400: Array<errorMessages> = []
+    const errors404: Array<errorMessages> = []
     const titleChecks = !title || title.length > 40
     const authorChecks = !author || author.length > 20
     if (titleChecks) {
-        errors.push(
+        errors400.push(
             {
                 message: 'InputModel has incorrect values',
                 field: 'title'
@@ -144,54 +150,53 @@ app.put('/videos/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, Co
 
 
     if (authorChecks) {
-        errors.push(
+        errors400.push(
             {
                 message: 'InputModel has incorrect values',
                 field: 'author'
             }
         )
-        res.status(400).json({
-            errorsMessages: errors
-        })
     }
     if (typeof canBeDownloaded !== 'boolean'){
-        errors.push(
+        errors400.push(
             {
                 message: 'InputModel has incorrect values',
                 field: 'canBeDownloaded'
             }
         )
-        res.status(400).json({
-            errorsMessages: errors
-        })
     }
     let foundVideo = db.videos.find(e => e.id === +req.params.id)
     if (!foundVideo) {
-        errors.push(
+        errors404.push(
             {
                 message: 'No such video',
                 field: 'id'
             }
         )
         res.sendStatus(404).json({
-            errorsMessages: errors
+            errorsMessages: errors404
         })
         return
 
     }
     if (minAgeRestriction && (minAgeRestriction > 18 || minAgeRestriction < 1)) {
-        errors.push(
+        errors400.push(
             {
                 message: 'InputModel has incorrect values',
                 field: 'minAgeRestriction'
             }
         )
-        res.sendStatus(400).json({
-            errorsMessages: errors
-        })
-        return
     }
-
+    if (errors400.length){
+        res.status(400).json({
+            errorsMessages: errors400
+        })
+    }
+    else if (errors404.length){
+        res.status(404).json({
+            errorsMessages: errors404
+        })
+    }
     if (availableResolutions && availableResolutions.length < 1) {
         availableResolutions = null
         return
