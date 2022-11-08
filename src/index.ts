@@ -63,7 +63,11 @@ const getCourseViewModel = (video: videoType): videoType => {
 
 app.use(express.json())
 
-
+app.get('/', (req: Request, res: Response) => {
+    res.json({
+        ok:'ok'
+    })
+})
 app.get('/videos', (req: Request, res: Response<Array<VideoViewModel>>) => {
     res.json(db.videos.map(getCourseViewModel))
 })
