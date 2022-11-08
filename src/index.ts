@@ -7,7 +7,7 @@ import {URIParamsCourseIdModel} from "./models/URIParamsCourseIdModel";
 import {errorMessages, ErrorModel} from "./models/Error";
 
 export const app = express()
-const port = 8000
+const port = process.env.PORT || 5000
 enum availableResolutionsQuality {
     P144 = 'P144',
     P240 = 'P240',
@@ -226,4 +226,4 @@ app.delete('testing/all-data', (req: Request, res: Response) => {
     res.sendStatus(204)
 })
 
-app.listen(port, '127.0.0.1')
+app.listen(port)
