@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "jest",
+    "build": "tsc",
     "watch": "tsc -w",
     "dev": "nodemon ./dist/src/index.js"
   },
